@@ -45,17 +45,6 @@ const RestType = new GraphQLObjectType({
         raddress: { type: GraphQLString },
         rcuisine: { type: GraphQLString },
         rdelivery: { type: GraphQLString },
-        rhours: {
-          sunday: { type: GraphQLBoolean },
-          monday: { type: GraphQLBoolean },
-          tuesday: { type: GraphQLBoolean },
-          wednesday: { type: GraphQLBoolean },
-          thursday: { type: GraphQLBoolean },
-          friday: { type: GraphQLBoolean },
-          saturday: { type: GraphQLBoolean },
-          startTime: { type: GraphQLString },
-          endTime: { type: GraphQLString },
-        },
         rrating: { type: GraphQLFloat },
     })
 });
@@ -104,12 +93,12 @@ const Mutation = new GraphQLObjectType({
         cpassword: { type: GraphQLString }
       },
       resolve(parent, args) {
-        let customer = new Customer({
+        let newCustomer = new Customers({
           cname: args.cname,
           cemail: args.cemail,
           cpassword: args.cpassword
         });
-        return customer.save();
+        return newCustomer.save();
       }
     },
 
@@ -121,12 +110,12 @@ const Mutation = new GraphQLObjectType({
         rpassword: { type: GraphQLString },
       },
       resolve(parent, args) {
-        let restaurant = new Customer({
-          rname: args.cname,
-          remail: args.cemail,
-          rpassword: args.cpassword
+        let newRestaurant = new Restaurants({
+          rname: args.rname,
+          remail: args.remail,
+          rpassword: args.rpassword
         });
-        return customer.save();
+        return newRestaurant.save();
       }
     }
 

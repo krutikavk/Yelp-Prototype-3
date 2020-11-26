@@ -1,0 +1,205 @@
+
+
+/*
+.header {
+  background-color: #F1F1F1;
+  text-align: center;
+  padding: 20px;
+}
+*/
+
+.card {
+  margin: 0 auto; /* Added */
+  float: none; /* Added */
+  margin-bottom: 100px; /* Added */
+}
+
+.card-horizontal {
+    display: flex;
+    flex: 1 1 auto;
+}
+
+.card-img-top {
+    width: 50%;
+    height: 20vw;
+    object-fit: cover;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.header{
+
+  background-image:url("./yelp-logo.jpg");
+  height:45px;
+  width:100px;
+  margin: 10px auto 30px;
+  float: left;
+}
+
+
+.body {
+  background: #eecda3;
+  background: -webkit-linear-gradient(to right, #eecda3, #ef629f);
+  background: linear-gradient(to right, #eecda3, #ef629f);
+  min-height: 100vh;
+}
+
+.form-heading { color:#fff; font-size:23px;}
+.panel h2{ color:#444444; font-size:18px; margin:0 0 8px 0;}
+.panel p { color:#777777; font-size:14px; margin-bottom:30px; line-height:24px;}
+.login-form .form-control {
+  background: #f7f7f7 none repeat scroll 0 0;
+  border: 1px solid #d4d4d4;
+  border-radius: 10px;
+  font-size: 14px;
+  height: 50px;
+  line-height: 50px;
+  margin:10px 0;
+  width: 100%;
+  box-shadow:0 0 15px 4px rgba(0,0,0,0.06);
+}
+
+.logo {
+  width: 100%; 
+  height: 100%; 
+  
+}
+.main-div {
+  background: #ffffff none repeat scroll 0 0;
+  border-radius: 2px;
+  margin: 10px auto 30px;
+  max-width: 25%;
+  padding: 50px 70px 70px 71px;
+  border: 2px solid black;
+  border-radius: 10px;
+}
+
+.login-form .form-group {
+  margin-bottom:5px;
+}
+.login-form{ text-align:center;}
+.forgot a {
+  color: #777777;
+  font-size: 14px;
+  text-decoration: underline;
+}
+.login-form  .btn.btn-primary {
+  background: #FF0000 none repeat scroll 0 0;
+  border-radius: 10px;
+  border-color: #f0ad4e;
+  color: #FF0000;
+  font-size: 14px;
+  width: 50%;
+  height: 50px;
+  line-height: 50px;
+  padding: 0;
+
+}
+
+
+.forgot {
+  text-align: center; margin-top:30px;
+}
+.bottom-text {
+  color: #ffffff;
+  font-size: 14px;
+  margin: auto;
+}
+
+.back { text-align: left; margin-top:10px;}
+.back a {color: #444444; font-size: 13px; text-decoration: none;}
+
+
+.bg-img {
+  /* The image used */
+
+  min-height: 380px;
+
+  /* Center and scale the image nicely */
+  background-position: top;
+  background-repeat: no-repeat;
+  background-size: cover;
+  
+  /* Needed to position the navbar */
+  position: relative;
+}
+
+/* Position the navbar container inside the image */
+.container {
+  position: absolute;
+  margin: 20px;
+  width: auto;
+}
+
+.topnav {
+  overflow: hidden;
+  background-color: #FFFFF;
+}
+
+.topnav a {
+  float: left;
+  color: #e12120;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.topnav a:active {
+  background-color: #3a8c94;
+  color: white;
+}
+
+.dashboard{ text-align:left;}
+
+.vh-100 {
+    min-height: 100vh;
+}
+
+.map-responsive{
+    bottom: 0;
+}
+
+.map-responsive iframe{
+    left:0;
+    top:0;
+    height:100%;
+    width:100%;
+    position:absolute;
+}
+
+
+section {
+  color: #fff;
+  text-align: center;
+}
+
+
+.left-half {
+  background-color: white;
+  position: absolute;
+  left: 0px;
+  width: 70%;
+}
+
+.right-half {
+  background-color: #b6701e;
+  position: absolute;
+  right: 0px;
+  width: 30%;
+}
+
+
+.container {
+  display: table;
+  width: 100%;
+}
