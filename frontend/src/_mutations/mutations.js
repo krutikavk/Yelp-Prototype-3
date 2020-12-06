@@ -1,25 +1,58 @@
 import { gql } from 'apollo-boost';
 
-const addCustomerMutation = gql`
+export const addCustomerMutation = gql`
   mutation ($cname: String, $cemail: String, $cpassword: String){
-      addCustomer(cname: $cname, cemail: $cemail, cpassword: $cpassword){
-          id
-          cname
-          cemail
-          cpassword
+    addCustomer(cname: $cname, cemail: $cemail, cpassword: $cpassword){
+      status
+      entity {
+        id
+        cname
+        cemail
+        cpassword
+        cjoined
       }
-  }
-`;
-
-const addRestaurantMutation = gql`
-  mutation ($rname: String, $remail: String, $rpassword: String){
-    addCustomer(rname: $rname, remail: $remail, rpassword: $rpassword){
-      id
-      rname
-      remail
-      rpassword
     }
   }
 `;
 
-export {addCustomerMutation, addRestaurantMutation};
+export const addRestaurantMutation = gql`
+  mutation ($rname: String, $remail: String, $rpassword: String){
+    addRestaurant(rname: $rname, remail: $remail, rpassword: $rpassword){
+      status
+      entity {
+        id
+        rname
+        remail
+        rpassword
+      }
+    }
+  }
+`;
+
+export const customerLoginMutation = gql`
+  mutation($cemail: String, $cpassword: String) {
+    loginCustomer(cemail: $cemail, cpassword: $cpassword) {
+      status
+      entity {
+        id
+        cname
+        cemail
+        cpassword
+      }
+    }
+  }
+`;
+
+export const restaurantLoginMutation = gql`
+  mutation ($remail: String, $rpassword: String){
+    loginRestaurant(remail: $remail, rpassword: $rpassword){
+      status
+      entity {
+        id
+        rname
+        remail
+        rpassword
+      }
+    }
+  }
+`;

@@ -5,6 +5,9 @@ import {Redirect} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {update, login, logout, restaurantLogin} from '../../_actions';
 import Navbar from '../Navbar/navbar';
+import { graphql } from 'react-apollo';
+import compose from 'lodash.flowright';
+import { addRestaurantMutation } from '../../_mutations/mutations';
 
 const validText = RegExp('[A-Za-z0-9]+')
 // eslint-disable-next-line no-useless-escape
@@ -96,8 +99,29 @@ class Restsignup extends Component {
       rpassword: this.state.rpassword,
     }
 
+    this.props.addRestaurantMutation({
+      variables: {
+        rname : this.state.rname,
+        remail : this.state.remail,
+        rpassword: this.state.rpassword,
+      },
+      // refetchQueries: [{ query: getCustomerQuery() }]
+    }).then(response => {
+      const { status, entity } = response.data.addRestaurant;
+      if(status == 200){
+          this.props.update('RID', entity.id)
+          this.props.update('REMAIL', entity.remail)
+          this.props.update('RPASSWORD', entity.rpassword)
+          this.props.update('RNAME', entity.rname)
+          this.props.login()
+          this.props.restaurantLogin()
+        } else {
+          this.props.logout();
+          alert('Email ID is already registered')
+        }
+    });
 
-
+    /*
     axios.defaults.withCredentials = true;
     //make a post request with the user data
     axios.post('http://localhost:3001/restaurants', data)
@@ -156,6 +180,7 @@ class Restsignup extends Component {
           })
           this.props.logout();
       });
+      */
   }
 
   
@@ -279,6 +304,4 @@ function mapDispatchToProps(dispatch) {
   
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Restsignup);
-
-
+export default compose(graphql(addRestaurantMutation, { name: 'addRestaurantMutation' }), connect(mapStateToProps, mapDispatchToProps))(Restsignup);

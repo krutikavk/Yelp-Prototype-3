@@ -1,17 +1,14 @@
 import React, { Component } from 'react';
 import '../../App.css';
-// import axios from 'axios';
 import {Redirect} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {update, login, logout, customerLogin} from '../../_actions';
 import Navbar from '../Navbar/navbar';
 import { graphql } from 'react-apollo';
 import compose from 'lodash.flowright';
-// import { getAuthorsQuery, getBooksQuery } from '../queries/queries';
 import { addCustomerMutation } from '../../_mutations/mutations';
 
 const validText = RegExp('[A-Za-z0-9]+')
-// eslint-disable-next-line no-useless-escape
 const validEmail = RegExp('\\S+\@\\S+\.\\S+')
 const validateForm = (errors) => {
   let valid = true;
@@ -30,7 +27,6 @@ class Custsignup extends Component {
 	  cname: '',
 	  cemail: '',
 	  cpassword: '',
-	  isAdded: false,
 	  errors: {
   		cname: '',
   		cemail: '',
@@ -89,17 +85,7 @@ class Custsignup extends Component {
 
   registerCustomer = (event) => {
   	event.preventDefault();
-  	if(validateForm(this.state.errors)) {
-      console.info("Valid form")
-    } else {
-      console.error("Invalid form")
-    }
-
-    const data = {
-      cname : this.state.cname,
-      cemail : this.state.cemail,
-      cpassword: this.state.cpassword,
-    }
+    console.log('this.state', this.state)
 
     this.props.addCustomerMutation({
       variables: {
@@ -107,48 +93,23 @@ class Custsignup extends Component {
         cemail : this.state.cemail,
         cpassword: this.state.cpassword,
       },
-      // refetchQueries: [{ query: getBooksQuery }]
-    });
-
-    /*
-    //set the with credentials to true
-    axios.defaults.withCredentials = true;
-    //make a post request with the user data
-    axios.post('http://localhost:3001/customers', data)
-      .then(response => {
-
-        console.log("Status Code : ",response.status);
-        if(response.status === 200){
-          console.log('Customer added')
-          this.props.update('CID', response.data[0].cid)
-          this.props.update('CEMAIL', response.data[0].cemail)
-          this.props.update('CPASSWORD', response.data[0].cpassword)
-          this.props.update('CNAME', response.data[0].cname)
-          this.props.update('CPHONE', response.data[0].cphone)
-          this.props.update('CABOUT', response.data[0].cabout)
-          this.props.update('CJOINED', response.data[0].cjoined)
-          this.props.update('CPHOTO', response.data[0].cphoto)
-          this.props.update('CFAVREST', response.data[0].cfavrest)
-          this.props.update('CFAVCUISINE', response.data[0].cfavcuisine)
+      // refetchQueries: [{ query: getCustomerQuery() }]
+    }).then(response => {
+      const { status, entity } = response.data.addCustomer;
+      if(status == 200){
+          this.props.update('CID', entity.id)
+          this.props.update('CEMAIL', entity.cemail)
+          this.props.update('CPASSWORD', entity.cpassword)
+          this.props.update('CNAME', entity.cname)
+          this.props.update('CJOINED', entity.cjoined)
           this.props.login()
           this.props.customerLogin()
-          //This is no longer needed, state error only needed
-          this.setState({
-            isAdded : true
-          })
+        } else {
+          this.props.logout();
+          alert('Email ID is already registered')
         }
-      }).catch(err =>{
-        this.setState({
-            isAdded : false
-        })
-        this.props.logout();
-        alert('Email ID is already registered')
     });
-    */
   }
-
-
-
 
   render() {
   	let redirectVar = null;
@@ -224,7 +185,6 @@ class Custsignup extends Component {
 
 }
 
-//importedname: state.reducer.statenames
 const mapStateToProps = (state) => {
     return {
       cid: state.custProfile.cid,
@@ -243,8 +203,6 @@ const mapStateToProps = (state) => {
     }
 }
 
-//const mapDispatchToProps = (dispatch) => { since this does not call a function directly it cannot be a function
-
 function mapDispatchToProps(dispatch) {  
   return {
     update : (field, payload) => dispatch(update(field, payload)),
@@ -255,13 +213,4 @@ function mapDispatchToProps(dispatch) {
   
 }
 
-// export default connect(mapStateToProps, mapDispatchToProps)(Custsignup);
-// export default compose(
-//     graphql(addCustomerMutation, { name: "addBookMutation" })
-// )(Custsignup);
 export default compose(graphql(addCustomerMutation, { name: 'addCustomerMutation' }), connect(mapStateToProps, mapDispatchToProps))(Custsignup);
-
-//export default Custsignup;
-
-
-

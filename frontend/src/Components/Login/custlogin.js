@@ -1,18 +1,13 @@
 import React, { Component } from 'react';
 import '../../App.css';
-import axios from 'axios';
 import cookie from 'react-cookies';
-
-//use react-router-dom ONLY
-//see Marko Perendio comment about using react-router-dom
-//Refer: https://stackoverflow.com/questions/55552147/invariant-failed-you-should-not-use-route-outside-a-router
 import {Redirect} from 'react-router-dom';
 import {connect} from 'react-redux';
-import {update, login, logout, customerLogin} from '../../_actions'
+import { graphql } from 'react-apollo';
+import compose from 'lodash.flowright';
+import { update, login, logout, customerLogin } from '../../_actions';
+import { customerLoginMutation } from '../../_mutations/mutations';
 import Navbar from '../Navbar/navbar';
-
-
-
 
 const validEmail = RegExp('\\S+\@\\S+\.\\S+')
 const validateForm = (errors) => {
@@ -27,9 +22,7 @@ const validateForm = (errors) => {
 class custLogin extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
-
       email: '',
       password: '',
       loginOption: '',
@@ -81,14 +74,34 @@ class custLogin extends Component {
 
   submitLogin = (event) => {
     event.preventDefault();
-
-    if(validateForm(this.state.errors)) {
-      console.info("Valid form")
-        
-    } else {
-      console.error("Invalid form")
-    }
-
+    const { customerLoginMutation } = this.props;
+    customerLoginMutation({
+      variables: {
+        cemail : this.state.email,
+        cpassword: this.state.password,
+      },
+      // refetchQueries: [{ query: getCustomerQuery() }]
+    }).then(response => {
+      const { status, entity } = response.data.loginCustomer;
+      if(status == 200){
+          this.props.update('CID', entity.id)
+          this.props.update('CEMAIL', entity.cemail)
+          this.props.update('CPASSWORD', entity.cpassword)
+          this.props.update('CNAME', entity.cname)
+          this.props.update('CPHONE', entity.cphone)
+          this.props.update('CABOUT', entity.cphone)
+          this.props.update('CJOINED', entity.cjoined)
+          this.props.update('CPHOTO', entity.cphoto)
+          this.props.update('CFAVREST', entity.cfavrest)
+          this.props.update('CFAVCUISINE', entity.cfavcuisine)
+          this.props.login()
+          this.props.customerLogin()
+        } else {
+          this.props.logout();
+          alert('Incorrect credentials');
+        }
+    });
+    /*
     const data = {
       cemail : this.state.email,
       cpassword : this.state.password,
@@ -125,7 +138,7 @@ class custLogin extends Component {
         this.setState({
             authFlag : false
         })
-    });
+    });*/
   }
 
   render(){
@@ -205,7 +218,6 @@ class custLogin extends Component {
 
 const mapStateToProps = (state) => {
     return {
-      //Customer props
       cid: state.custProfile.cid,
       cemail: state.custProfile.cemail,
       cpassword: state.custProfile.cpassword,
@@ -221,8 +233,6 @@ const mapStateToProps = (state) => {
     }
 }
 
-//const mapDispatchToProps = (dispatch) => { since this does not call a function directly it cannot be a function
-
 function mapDispatchToProps(dispatch) {  
   return {
     update : (field, payload) => dispatch(update(field, payload)),
@@ -230,9 +240,6 @@ function mapDispatchToProps(dispatch) {
     logout: () => dispatch(logout()),
     customerLogin: () => dispatch(customerLogin()),
   }
-  
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(custLogin);
-//export Login Component
-//export default Login;
+export default compose(graphql(customerLoginMutation, { name: 'customerLoginMutation' }), connect(mapStateToProps, mapDispatchToProps))(custLogin);

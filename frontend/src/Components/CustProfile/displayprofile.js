@@ -1,29 +1,27 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import '../../App.css';
 import axios from 'axios';
-import {connect} from 'react-redux';
-import {update} from '../../_actions'
-import {login} from '../../_actions';
-import {Redirect, Link} from 'react-router-dom';
+import { connect } from 'react-redux';
+import { Redirect, Link } from 'react-router-dom';
+import { update } from '../../_actions';
 import profilepicture from './profile-picture.png';
 import Review from '../Reviews/displayreview';
 import Navbar from '../Navbar/navbar';
 
-
-const validText = RegExp('[A-Za-z0-9]+')
+const validText = RegExp('[A-Za-z0-9]+');
 
 class DisplayProfile extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      reviews: []
-    }
-
+      reviews: [],
+    };
   }
 
-  componentWillMount() {
-    let url = 'http://localhost:3001/customers/' + this.props.cid + '/reviews';
+  componentDidMount() {
+    /*
+    const url = 'http://localhost:3001/customers/' + this.props.cid + '/reviews';
     axios.get(url)
       .then(response => {
         if(response.status === 200){
@@ -37,13 +35,12 @@ class DisplayProfile extends Component {
       }).catch(err =>{
         console.log("No response")
     });
+    */
   }
-
-
 
   render() {
     let redirectVar = null;
-    console.log(this.props.isLogged)
+    console.log(this.props.isLogged);
     if(this.props.isLogged === false) {
       redirectVar = <Redirect to= '/login'/>
     }
@@ -129,27 +126,24 @@ class DisplayProfile extends Component {
 
 }
 
-
 const mapStateToProps = (state) => {
-    return {
-      cid: state.custProfile.cid,
-      cemail: state.custProfile.cemail,
-      cpassword: state.custProfile.cpassword,
-      cname: state.custProfile.cname,
-      cphone: state.custProfile.cphone,
-      cabout: state.custProfile.cabout,
-      cjoined: state.custProfile.cjoined,
-      cphoto: state.custProfile.cphoto,
-      cfavrest: state.custProfile.cfavrest,
-      cfavcuisine: state.custProfile.cfavcuisine,
-      isLogged: state.isLogged.isLoggedIn,
-      whoIsLogged: state.whoIsLogged.whoIsLoggedIn,
-    }
-}
+  return {
+    cid: state.custProfile.cid,
+    cemail: state.custProfile.cemail,
+    cpassword: state.custProfile.cpassword,
+    cname: state.custProfile.cname,
+    cphone: state.custProfile.cphone,
+    cabout: state.custProfile.cabout,
+    cjoined: state.custProfile.cjoined,
+    cphoto: state.custProfile.cphoto,
+    cfavrest: state.custProfile.cfavrest,
+    cfavcuisine: state.custProfile.cfavcuisine,
+    isLogged: state.isLogged.isLoggedIn,
+    whoIsLogged: state.whoIsLogged.whoIsLoggedIn,
+  };
+};
 
-//const mapDispatchToProps = (dispatch) => { since this does not call a function directly it cannot be a function
-
-function mapDispatchToProps(dispatch) {  
+function mapDispatchToProps(dispatch) {
   return {
     update : (field, payload) => dispatch(update(field, payload)),
   }

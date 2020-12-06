@@ -6,7 +6,10 @@ import axios from 'axios';
 //Refer: https://stackoverflow.com/questions/55552147/invariant-failed-you-should-not-use-route-outside-a-router
 import {Redirect} from 'react-router-dom';
 import {connect} from 'react-redux';
-import {update, login, logout, restaurantLogin} from '../../_actions'
+import {update, login, logout, restaurantLogin} from '../../_actions';
+import { graphql } from 'react-apollo';
+import compose from 'lodash.flowright';
+import { restaurantLoginMutation } from '../../_mutations/mutations';
 import Navbar from '../Navbar/navbar';
 
 
@@ -15,7 +18,6 @@ class restLogin extends Component {
     super(props);
 
     this.state = {
-
       email: '',
       password: '',
       loginOption: '',
@@ -50,59 +52,44 @@ class restLogin extends Component {
   submitLogin = (event) => {
     event.preventDefault();
 
-    const data = {
-      remail : this.state.email,
-      rpassword : this.state.password,
-    }
-    //set the with credentials to true
-    axios.defaults.withCredentials = true;
-    //make a post request with the user data
-    axios.post('http://localhost:3001/restaurants/login', data)
-      .then(response => {
-        console.log("Status Code : ",response.status);
-        console.log("login here")
-        if(response.status === 200){
-          console.log("Login authorized")
-          //call props action
-  
-          //weird--restaurant login works here
-          this.props.restaurantLogin()
-          this.props.update('RID', response.data[0].rid)
-          this.props.update('REMAIL', response.data[0].remail)
-          this.props.update('RPASSWORD', response.data[0].rpassword)
-          this.props.update('RNAME', response.data[0].rname)
-          this.props.update('RPHONE', response.data[0].rphone)
-          this.props.update('RABOUT', response.data[0].rabout)
-          this.props.update('RPHOTO', response.data[0].rphoto)
-          this.props.update('RLOCATION', response.data[0].rlocation)
-          this.props.update('RLATITUDE', response.data[0].rlatitude)
-          this.props.update('RLONGITUDE', response.data[0].rlongitude)
-          this.props.update('RADDRESS', response.data[0].raddress)
-          this.props.update('RCUISINE', response.data[0].rcuisine)
-          this.props.update('RDELIVERY', response.data[0].rdelivery)
-          this.props.login()
-          //weird--dosnt work here
-          //this.props.restaurantLogin()
-          this.setState({
-              authFlag : true
-          })
-        }
-      }).catch(err =>{
-        console.log("login there")
+    const { restaurantLoginMutation } = this.props;
+    console.log('state: ', this.state);
+    restaurantLoginMutation({
+      variables: {
+        remail : this.state.email,
+        rpassword: this.state.password,
+      },
+      // refetchQueries: [{ query: getCustomerQuery() }]
+    }).then(response => {
+      console.log('mutation resp: ', response);
+      const { status, entity } = response.data.loginRestaurant;
+      if(status == 200){
+
+        this.props.update('RID', entity.rid)
+        this.props.update('REMAIL', entity.remail)
+        this.props.update('RPASSWORD', entity.rpassword)
+        this.props.update('RNAME', entity.rname)
+        this.props.update('RPHONE', entity.rphone)
+        this.props.update('RABOUT', entity.rabout)
+        this.props.update('RPHOTO', entity.rphoto)
+        this.props.update('RLATITUDE', entity.rlatitude)
+        this.props.update('RLONGITUDE', entity.rlongitude)
+        this.props.update('RADDRESS', entity.raddress)
+        this.props.update('RCUISINE', entity.rcuisine)
+        this.props.update('RDELIVERY', entity.rdelivery)
+        //this.props.update('RRATING', entity.rdelivery)
         this.setState({
-            authFlag : false
+          authFlag : true
         })
+      }
     });
   }
 
   render(){
-    //redirect based on successful login
-
     let redirectVar = null;
     console.log("whoislogged: ", this.props.whoIsLogged)
     if(this.state.authFlag === true) {
       redirectVar = <Redirect to= "/restaurant"/>
-      //redirectVar = <Redirect to= "/events/add"/>
     }
 
     return(
@@ -189,6 +176,5 @@ function mapDispatchToProps(dispatch) {
   
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(restLogin);
-//export Login Component
-//export default Login;
+// export default connect(mapStateToProps, mapDispatchToProps)(restLogin);
+export default compose(graphql(restaurantLoginMutation, { name: 'restaurantLoginMutation' }), connect(mapStateToProps, mapDispatchToProps))(restLogin);
