@@ -56,3 +56,67 @@ export const restaurantLoginMutation = gql`
     }
   }
 `;
+
+export const updateRestaurantInfoMutation = gql`
+  mutation (
+    $rid: ID,
+    $rphone: String,
+    $rabout: String,
+    $rcuisine: String,
+    $rdelivery: String,
+  ) {
+    updateRestaurantInfo(
+      rid: $rid,
+      rphone: $rphone,
+      rabout: $rabout,
+      rcuisine: $rcuisine,
+      rdelivery: $rdelivery,
+    ) {
+      status
+      entity {
+        id
+        rname
+        remail
+        rpassword
+        rphone
+        rabout
+        rcuisine
+        rdelivery
+        raddress
+        rlatitude
+        rlongitude 
+      }
+    }
+  }
+`;
+
+export const updateRestaurantLocationMutation = gql`
+  mutation (
+    $rid: ID,
+    $rlatitude: Float,
+    $rlongitude: Float,
+    $raddress: String,
+  ) {
+    updateRestaurantLocation(
+      rid: $rid,
+      rlatitude: $rlatitude,
+      rlongitude: $rlongitude,
+      raddress: $raddress,
+    ) {
+      status
+      entity {
+        id
+        rname
+        remail
+        rpassword
+        rphone
+        rabout
+        rcuisine
+        rdelivery
+        raddress
+        rlatitude
+        rlongitude 
+      }
+    }
+  }
+`;

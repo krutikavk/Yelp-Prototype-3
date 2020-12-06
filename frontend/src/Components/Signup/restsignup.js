@@ -87,18 +87,6 @@ class Restsignup extends Component {
 
   registerRestaurant = (event) => {
     event.preventDefault();
-    if(validateForm(this.state.errors)) {
-      console.info("Valid form")
-    } else {
-      console.error("Invalid form")
-    }
-
-    const data = {
-      rname : this.state.rname,
-      remail : this.state.remail,
-      rpassword: this.state.rpassword,
-    }
-
     this.props.addRestaurantMutation({
       variables: {
         rname : this.state.rname,

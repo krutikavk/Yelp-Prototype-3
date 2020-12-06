@@ -11,6 +11,9 @@ import {
   getLatLng,
 } from 'react-places-autocomplete';
 import Navbar from '../Navbar/navbar';
+import { graphql } from 'react-apollo';
+import compose from 'lodash.flowright';
+import { updateRestaurantLocationMutation } from '../../_mutations/mutations';
 
 
 class Restupdatelocation extends Component {
@@ -39,10 +42,35 @@ class Restupdatelocation extends Component {
       .then(results => getLatLng(results[0]))
       .then(latLng => {
         console.log('Location found: ', latLng)
+        this.props.updateRestaurantLocationMutation({
+          variables: {
+            raddress : this.state.address,
+            rlatitude: latLng.lat,
+            rlongitude : latLng.lng,
+            rid: this.props.rid,
+          },
+          // refetchQueries: [{ query: getCustomerQuery() }]
+        }).then(response => {
+          const { status, entity } = response.data.updateRestaurantLocation;
+          if(status == 200){
+            this.props.update('RLATITUDE',latLng.lat)
+            this.props.update('RLONGITUDE',latLng.lng)
+            this.props.update('RADDRESS', this.state.address)
+            this.setState({
+              updated: true,
+            })
+          } else {
+            alert("Update failed")
+            this.setState({
+                updated : false
+            })
+          }
+        });
+
 
         //Update restaurant location
 
-
+        /*
         let endpoint = 'http://localhost:3001/restaurants/' + this.props.rid;
         console.log('update restaurant endpoint: ', endpoint)
 
@@ -59,20 +87,6 @@ class Restupdatelocation extends Component {
           rdelivery: this.props.rdelivery,
           rid: this.props.rid
         }
-
-        /*
-        remail: this.props.remail,
-      rname: this.props.rname,
-      rphone : this.state.rphone,
-      rabout : this.state.rabout,
-      rlocation: this.props.rlocation,
-      rlatitude: this.props.rlatitude,
-      rlongitude: this.props.rlongitude,
-      raddress: this.props.raddress,
-      rcuisine: this.state.rcuisine,
-      rdelivery: this.state.rdelivery,
-      rid: this.props.rid
-      */
 
         axios.put(endpoint, data)
           .then(response => {
@@ -93,6 +107,7 @@ class Restupdatelocation extends Component {
                 updated : false
             })
         });
+        */
       })
       .catch(error => console.error('Error', error));
   };
@@ -214,4 +229,4 @@ function mapDispatchToProps(dispatch) {
   
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Restupdatelocation);
+export default compose(graphql(updateRestaurantLocationMutation, { name: 'updateRestaurantLocationMutation' }), connect(mapStateToProps, mapDispatchToProps))(Restupdatelocation);

@@ -37,10 +37,10 @@ const RestType = new GraphQLObjectType({
     remail: { type: GraphQLString },
     rpassword: { type: GraphQLString },
     rname: { type: GraphQLString },
-    rphone: { type: GraphQLInt },
+    rphone: { type: GraphQLString },
     rabout: { type: GraphQLString },
-    rlatitude: { type: GraphQLInt },
-    rlongitude: { type: GraphQLInt },
+    rlatitude: { type: GraphQLFloat },
+    rlongitude: { type: GraphQLFloat },
     raddress: { type: GraphQLString },
     rcuisine: { type: GraphQLString },
     rdelivery: { type: GraphQLString },
@@ -112,10 +112,14 @@ const Mutation = new GraphQLObjectType({
         if (customer) {
           return { status: 401 };
         }
+        const now = new Date();
+        const jsonDate = now.toJSON();
+        const joined = new Date(jsonDate);
         const newCustomer = new Customers({
           cname: args.cname,
           cemail: args.cemail,
           cpassword: args.cpassword,
+          cjoined: joined,
         });
         newCustomer.save();
         return { status: 200, entity: newCustomer };
@@ -151,13 +155,10 @@ const Mutation = new GraphQLObjectType({
         cpassword: { type: GraphQLString },
       },
       async resolve(parent, args) {
-        console.log('args', args);
         const customer = await Customers.findOne({ cemail: args.cemail, cpassword: args.cpassword });
         if (customer) {
-          console.log('customer found')
           return { status: 200, entity: customer };
         }
-        console.log('not found')
         return { status: 401 };
       },
     },
@@ -169,8 +170,53 @@ const Mutation = new GraphQLObjectType({
         rpassword: { type: GraphQLString },
       },
       async resolve(parent, args) {
-        console.log(args);
         const restaurant = await Restaurants.findOne({ remail: args.remail, rpassword: args.rpassword });
+        if (restaurant) {
+          return { status: 200, entity: restaurant };
+        }
+        return { status: 401 };
+      },
+    },
+
+    updateRestaurantInfo: {
+      type: RestaurantLoginType,
+      args: {
+        rphone: { type: GraphQLString },
+        rabout: { type: GraphQLString },
+        rcuisine: { type: GraphQLString },
+        rdelivery: { type: GraphQLString },
+        rid: { type: GraphQLID },
+      },
+      async resolve(parent, args) {
+        const updateData = {
+          rphone: args.rphone,
+          rabout: args.rabout,
+          rcuisine: args.rcuisine,
+          rdelivery: args.rdelivery,
+        };
+        const restaurant = await Restaurants.findByIdAndUpdate(args.rid, updateData, { new: true });
+        if (restaurant) {
+          return { status: 200, entity: restaurant };
+        }
+        return { status: 401 };
+      },
+    },
+
+    updateRestaurantLocation: {
+      type: RestaurantLoginType,
+      args: {
+        raddress: { type: GraphQLString },
+        rlatitude: { type: GraphQLFloat },
+        rlongitude: { type: GraphQLFloat },
+        rid: { type: GraphQLID },
+      },
+      async resolve(parent, args) {
+        const updateData = {
+          rlatitude: args.rlatitude,
+          rlongitude: args.rlongitude,
+          raddress: args.raddress,
+        };
+        const restaurant = await Restaurants.findByIdAndUpdate(args.rid, updateData, { new: true });
         if (restaurant) {
           return { status: 200, entity: restaurant };
         }

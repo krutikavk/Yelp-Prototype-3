@@ -7,7 +7,7 @@ const restSchema = new Schema({
   remail: { type: String, unique: true, DropDups: true },
   rpassword: { type: String },
   rname: { type: String },
-  rphone: { type: Number },
+  rphone: { type: String },
   rabout: { type: String },
   rphoto: [{ type: String }],
   rlatitude: { type: Number },

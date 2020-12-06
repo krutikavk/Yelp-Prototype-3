@@ -5,7 +5,9 @@ import {Redirect} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {update, login, logout, restaurantLogin} from '../../_actions'
 import Navbar from '../Navbar/navbar';
-
+import { graphql } from 'react-apollo';
+import compose from 'lodash.flowright';
+import { updateRestaurantInfoMutation } from '../../_mutations/mutations';
 
 const validText = RegExp('[A-Za-z0-9]+')
 const validateForm = (errors) => {
@@ -35,28 +37,12 @@ class Restupdateinfo extends Component {
       }
     };
 
-    //this.rnameChangeHandler = this.rnameChangeHandler.bind(this);
     this.rphoneChangeHandler = this.rphoneChangeHandler.bind(this);
     this.raboutChangeHandler = this.raboutChangeHandler.bind(this);
     this.rcuisineChangeHandler = this.rcuisineChangeHandler.bind(this);
     this.rdeliveryChangeHandler = this.rdeliveryChangeHandler.bind(this);
     this.submitChange = this.submitChange.bind(this);
   }
-
-  /*
-  rnameChangeHandler = (event) => {
-    let err = this.state.errors;
-    err.rname = event.target.value.length <= 50 ? '' : 'Too long name'
-    this.setState({
-        errors: err
-      }, ()=> {
-        console.log(err.rname)
-    }) 
-    this.setState({
-        rname : event.target.value
-    })
-  }
-  */
 
   rphoneChangeHandler = (event) => {
     let err = this.state.errors;
@@ -71,7 +57,6 @@ class Restupdateinfo extends Component {
         rphone : event.target.value
     })
   }
-
 
   raboutChangeHandler = (event) => {
     let err = this.state.errors;
@@ -101,53 +86,22 @@ class Restupdateinfo extends Component {
     })
   }
 
-
-
   submitChange = (event) => {
     event.preventDefault();
-    if(validateForm(this.state.errors)) {
-      console.info('Valid form')
-    } else {
-      console.error('Invalid form')
-    }
-    const data = {
-      remail: this.props.remail,
-      rname: this.props.rname,
-      rphone : this.state.rphone,
-      rabout : this.state.rabout,
-      rlocation: this.props.rlocation,
-      rlatitude: this.props.rlatitude,
-      rlongitude: this.props.rlongitude,
-      raddress: this.props.raddress,
-      rcuisine: this.state.rcuisine,
-      rdelivery: this.state.rdelivery,
-      rid: this.props.rid
-    }
+    console.log('rcuisine', this.state)
 
-    /*
-    request.body.remail,
-    request.body.rname,
-    request.body.rphone,
-    request.body.rabout,
-    request.body.rlocation,
-    request.body.rlatitude,
-    request.body.rlongitude,
-    request.body.raddress,
-    request.body.rcuisine,
-    request.body.rdelivery,
-    request.params.rid
-    */
-
-    let endpoint = 'http://localhost:3001/restaurants/' + this.props.rid;
-    console.log('update endpoint: ', endpoint)
-
-    axios.put(endpoint, data)
-      .then(response => {
-        console.log('Status Code : ', response.status);
-        if(response.status === 200){
-          console.log('Update completed')
-          //call props action
-          //this.props.update('RNAME', this.state.rname)
+    this.props.updateRestaurantInfoMutation({
+      variables: {
+        rphone : this.state.rphone,
+        rabout : this.state.rabout,
+        rcuisine: this.state.rcuisine,
+        rdelivery: this.state.rdelivery,
+        rid: this.props.rid,
+      },
+      // refetchQueries: [{ query: getCustomerQuery() }]
+    }).then(response => {
+      const { status, entity } = response.data.updateRestaurantInfo;
+      if(status == 200){
           this.props.update('RPHONE', this.state.rphone)
           this.props.update('RABOUT', this.state.rabout)
           this.props.update('RCUISINE', this.state.rcuisine)
@@ -155,12 +109,12 @@ class Restupdateinfo extends Component {
           this.setState({
             updated: true,
           })
+        } else {
+          alert("Update failed")
+          this.setState({
+              updated : false
+          })
         }
-      }).catch(err =>{
-        alert("Update failed")
-        this.setState({
-            updated : false
-        })
     });
   }
 
@@ -223,7 +177,6 @@ class Restupdateinfo extends Component {
                                     required/>
               </div>
 
-              
               <div class="form-group">
                 <label for="rdelivery">Delivery Type</label>
                 <select class="form-control" id="rdelivery" onChange = {this.rdeliveryChangeHandler}>>
@@ -239,9 +192,10 @@ class Restupdateinfo extends Component {
               <div className="form-group text-left">
                 <label for="comment">About You</label>
                 <textarea onChange = {this.raboutChangeHandler} 
-                          class="form-control form-control-sm" rows="5" id="rabout"></textarea>
-                          {errors.rabout.length > 0 && 
-                          <span><small id="emailHelp" className="form-text text-muted">{errors.rabout}</small></span>}
+                  class="form-control form-control-sm" rows="5" id="rabout">
+                </textarea>
+                {errors.rabout.length > 0 && 
+                <span><small id="emailHelp" className="form-text text-muted">{errors.rabout}</small></span>}
               </div>
 
               <div className="col-md-12 text-center">
@@ -250,12 +204,9 @@ class Restupdateinfo extends Component {
           </form>
         </div>
       </div>
-
     )
   }
-
 }
-
 
 const mapStateToProps = (state) => {
     return {
@@ -267,7 +218,6 @@ const mapStateToProps = (state) => {
       rphone: state.restProfile.rphone,
       rabout: state.restProfile.rabout,
       rphoto: state.restProfile.rphoto,
-      rlocation: state.restProfile.rlocation,
       rlatitude: state.restProfile.rlatitude,
       rlongitude: state.restProfile.rlongitude,
       raddress: state.restProfile.raddress,
@@ -288,4 +238,4 @@ function mapDispatchToProps(dispatch) {
   
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Restupdateinfo);
+export default compose(graphql(updateRestaurantInfoMutation, { name: 'updateRestaurantInfoMutation' }), connect(mapStateToProps, mapDispatchToProps))(Restupdateinfo);
