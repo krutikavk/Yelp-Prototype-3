@@ -5,11 +5,8 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const cors = require('cors');
 const schema = require('./schema/schema');
-
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-
 const { mongoDB } = require('./config');
+
 const app = express();
 
 const options = {
@@ -18,7 +15,6 @@ const options = {
   poolSize: 10,
   bufferMaxEntries: 0,
 };
-
 
 mongoose.connect(mongoDB, options, (err, res) => {
   if (err) {
@@ -54,14 +50,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/graphql",graphqlHTTP({
+app.use('/graphql', graphqlHTTP({
   schema,
-  graphiql: true
+  graphiql: true,
 }));
-
-// app.use(express.static(path.join(__dirname, 'public')));
-
-// app.use('/', indexRouter);
-// app.use('/users', usersRouter);
 
 module.exports = app;
