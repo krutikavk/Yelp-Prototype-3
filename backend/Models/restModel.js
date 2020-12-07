@@ -9,7 +9,7 @@ const restSchema = new Schema({
   rname: { type: String },
   rphone: { type: String },
   rabout: { type: String },
-  rphoto: [{ type: String }],
+  rphoto: { type: String },
   rlatitude: { type: Number },
   rlongitude: { type: Number },
   raddress: { type: String },
@@ -20,6 +20,7 @@ const restSchema = new Schema({
     default: 'Curbside pickup',
   },
   rrating: { type: Number, default: 0 },
+  rdish: [{ type: String }],
 },
 {
   versionKey: false,

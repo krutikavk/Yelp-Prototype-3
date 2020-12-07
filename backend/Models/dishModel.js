@@ -12,11 +12,7 @@ const dishSchema = new Schema({
     enum: ['Appetizer', 'Salad', 'Main Course', 'Dessert', 'Beverage'],
     default: 'Main Course',
   },
-  durl: {
-    type: String,
-    enum: ['Appetizer', 'Salad', 'Main Course', 'Dessert', 'Beverage'],
-    default: 'Main Course',
-  },
+  durl: String,
 },
 {
   versionKey: false,

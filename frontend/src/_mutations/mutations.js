@@ -38,6 +38,13 @@ export const customerLoginMutation = gql`
         cname
         cemail
         cpassword
+        cname
+        cphone
+        cabout
+        cjoined
+        cphoto
+        cfavrest
+        cfavcuisine
       }
     }
   }
@@ -52,6 +59,14 @@ export const restaurantLoginMutation = gql`
         rname
         remail
         rpassword
+        rphone
+        rabout
+        rcuisine
+        rdelivery
+        raddress
+        rlatitude
+        rlongitude
+        rdish
       }
     }
   }
@@ -84,7 +99,8 @@ export const updateRestaurantInfoMutation = gql`
         rdelivery
         raddress
         rlatitude
-        rlongitude 
+        rlongitude
+        rdish 
       }
     }
   }
@@ -115,7 +131,8 @@ export const updateRestaurantLocationMutation = gql`
         rdelivery
         raddress
         rlatitude
-        rlongitude 
+        rlongitude
+        rdish 
       }
     }
   }
