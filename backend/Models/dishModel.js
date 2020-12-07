@@ -4,6 +4,7 @@ const { Schema } = mongoose;
 
 const dishSchema = new Schema({
   rid: String,
+  rname: String,
   dname: String,
   dingredients: String,
   dprice: Number,

@@ -4,8 +4,10 @@ import {connect} from 'react-redux';
 import axios from 'axios';
 import {Redirect} from 'react-router-dom';
 import Navbar from '../Navbar/navbar';
-
-
+import { graphql } from 'react-apollo';
+import compose from 'lodash.flowright';
+import { update, login, logout, customerLogin } from '../../_actions';
+import { addDishMutation } from '../../_mutations/mutations';
 
 class AddDish extends Component {
 
@@ -18,6 +20,7 @@ class AddDish extends Component {
       dprice: '',
       ddescription: '',
       dcategory: '',
+      dcategoryOptions: ['Appetizer', 'Salad', 'Main Course', 'Dessert', 'Beverage'],
       added: false,
 
       //For uploading image
@@ -84,9 +87,13 @@ class AddDish extends Component {
     let fileType = fileParts[1];
     console.log("Preparing the upload");
 
+    // Reference: https://stackoverflow.com/questions/52999712/aws-s3-bucket-getsignedurl-put-return-a-400-bad-request
+    // remove JWT authorization before sending s3 upload request
+    // add back once image is added 
     axios.defaults.withCredentials = false;
-
-    axios.post("http://localhost:3001/sign_s3",{ fileName : fileName, fileType : fileType })
+    
+    let url = `${process.env.REACT_APP_BACKEND}/sign_s3`;
+    axios.post(url, { fileName : fileName, fileType : fileType })
       .then(response => {
         var returnData = response.data.data.returnData;
         var signedRequest = returnData.signedRequest;
@@ -101,6 +108,7 @@ class AddDish extends Component {
             'ContentType': fileType
           }
         };
+        delete axios.defaults.headers.common["authorization"];
 
         axios.put(signedRequest,file, options)
           .then(result => {
@@ -108,7 +116,6 @@ class AddDish extends Component {
             this.setState({
               success: true
             });
-
           })
           .catch(error => {
             alert("ERROR " + JSON.stringify(error));
@@ -117,69 +124,61 @@ class AddDish extends Component {
     .catch(error => {
       alert(JSON.stringify(error));
     })
-
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
   }
-
 
   addDish = (event) => {
     event.preventDefault();
-    axios.defaults.withCredentials = true;
-    let url = 'http://localhost:3001/dishes'
-
-    const data = {
-      dname: this.state.dname,
-      rid: this.props.rid,
-      dingredients: this.state.dingredients,
-      dprice: this.state.dprice,
-      ddescription: this.state.ddescription,
-      dcategory: this.state.dcategory,
-      durl: this.state.url
-    }
-
-
-    axios.post(url, data)
-      .then(response => {
-        console.log("Status Code : ",response.status);
-        if(response.status === 200){
-          console.log("Dish added ")
-          
+    alert('inside add dish',)
+    const { addDishMutation } = this.props;
+    addDishMutation({
+      variables: {
+        dname: this.state.dname,
+        rid: this.props.rid,
+        rname: this.props.rname,
+        dingredients: this.state.dingredients,
+        dprice: parseFloat(this.state.dprice),
+        ddescription: this.state.ddescription,
+        dcategory: this.state.dcategory,
+        durl: this.state.url
+      },
+      // refetchQueries: [{ query: getCustomerQuery() }]
+    }).then(response => {
+      alert('got response: ', response)
+      const { status, entity } = response.data.addDish;
+      if(status === 200){
           this.setState({
-              added : true
-          })
+            added : true
+          });
+        } else {
+          alert('Error adding dish');
         }
-      }).catch(err =>{
-        alert("Incorrect credentials")
     });
-
   }
 
 
   render(){
 
     let redirectVar = null;
-
-    if(! (this.props.isLogged !== true && this.props.whoIsLogged !== true)) {
-      //redirectVar = <Redirect to='/login'/>
+    if(! (this.props.isLogged === true && this.props.whoIsLogged === true)) {
+      redirectVar = <Redirect to='/login'/>
     }
     if(this.state.added === true) {
       redirectVar = <Redirect to='/restaurant'/>
     }
-
     const Success_message = () => (
-      <div class='form-group'>
-      <img src={this.state.url} alt="" class="img-responsive" width="40" height="40"/>
+      <div className='form-group'>
+      <img src={this.state.url} alt="" className="img-responsive" width="40" height="40"/>
       <br/>
       </div>
     )
 
     return (
-
       <div>
         <Navbar/>
         <div>
           {redirectVar} 
           <div className="card col-12 col-lg-4 login-card mt-2 hv-center" >
-
             <br/>
             <form>
               <div className="col d-flex justify-content-center rounded-0">
@@ -187,7 +186,6 @@ class AddDish extends Component {
                   <h4>New Dish: </h4>
                 </div>
               </div>
-
               <div className = "form-group text-left">
                 <br/>
                 <label htmlFor="exampleInputEmail1">Dish Name</label>
@@ -199,7 +197,6 @@ class AddDish extends Component {
                                     aria-describedby="emailHelp" 
                                     required/>
               </div>
-
               <div className = "form-group text-left">
                 <br/>
                 <label htmlFor="exampleInputEmail1">Dish Ingredients</label>
@@ -235,15 +232,17 @@ class AddDish extends Component {
                                     required/>
                                     
               </div>
-
               <div class="form-group">
-                
-                
-                <label htmlFor="exampleInputPassword1">Dish Photo</label> <br/>
-                {Success_message}
-                <input onChange={this.handleFileUpload} ref = {(ref) => {this.uploadInput = ref;}} type = "file"/>
+                <label for="dcategory">Dish Category</label>
+                <select className="form-control" id="dcategory" onChange = {this.dcategoryChangeHandler}>>
+                  <option value = {this.state.dcategory}> Choose...</option>
+                  {this.state.dcategoryOptions.map(option => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
               </div>
-
               <div className="col-md-12 text-center">
               <button id="btnLogin" className="btn btn-danger" onClick={this.addDish}>Add Dish</button>
               </div>
@@ -251,19 +250,13 @@ class AddDish extends Component {
           </div>
         </div>
       </div>
-
-
     )
-
-
   }
-
 }
 
 
 const mapStateToProps = (state) => {
     return {
-
       //Get global state to get cid, rid and login details to fetch dishes for customer/restaurant
       rid: state.restProfile.rid,
       isLogged: state.isLogged.isLoggedIn,
@@ -272,5 +265,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-
-export default connect(mapStateToProps)(AddDish);
+export default compose(graphql(addDishMutation, { name: 'addDishMutation' }), connect(mapStateToProps))(AddDish);

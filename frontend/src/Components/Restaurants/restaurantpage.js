@@ -130,6 +130,7 @@ class Restaurants extends Component {
 
     let rid = (this.props.whoIsLogged === true) ? this.props.rid : this.props.location.query.rid;
     console.log("rid on restaurantpage", rid)
+    /*
     //Get working hours
     let getHours = 'http://localhost:3001/restaurants/' + rid + '/hours'
     axios.get(getHours)
@@ -148,8 +149,8 @@ class Restaurants extends Component {
     }).catch(err =>{
         console.log("No response hours")
     });
-
-
+    */
+    /*
     //Get all reviews
     let getReviews = 'http://localhost:3001/restaurants/' + rid + '/reviews'
     axios.get(getReviews)
@@ -166,9 +167,9 @@ class Restaurants extends Component {
     }).catch(err =>{
         console.log("No response")
     });
+    */
 
-
-
+    /*
     let getAvgRating = 'http://localhost:3001/restaurants/' + rid + '/average'
     axios.get(getAvgRating)
     .then(response => {
@@ -185,7 +186,7 @@ class Restaurants extends Component {
     }).catch(err =>{
         console.log("No response")
     });
-
+    */
 
     //Get all pictures--FOR NOW, SINGLE IMAGE
     //Display images from array
@@ -373,17 +374,16 @@ class Restaurants extends Component {
                   <p class="card-text font-weight-bold">Hours:</p>
                     <p class="card-text">
                         <div>
-                          <div> Sunday: {this.state.hours.sunday ? <React.Fragment>Open</React.Fragment> : null}</div>
-                          <div> Monday: {this.state.hours.monday ? <React.Fragment>Open</React.Fragment> : null}</div>
-                          <div> Tuesday: {this.state.hours.tuesday ? <React.Fragment>Open</React.Fragment> : null}</div>
-                          <div> Wednesday: {this.state.hours.wednesday ? <React.Fragment>Open</React.Fragment> : null}</div>
-                          <div> Thursday: {this.state.hours.thursday ? <React.Fragment>Open</React.Fragment> : null}</div>
-                          <div> Friday: {this.state.hours.friday ? <React.Fragment>Open</React.Fragment> : null}</div>
-                          <div> Saturday: {this.state.hours.saturday ? <React.Fragment>Open</React.Fragment> : null}</div>
-                          <div> From: {this.state.hours.starttime} hrs.</div>
-                          <div> To: {this.state.hours.endtime} hrs.</div>
+                          <div> Sunday: Open</div>
+                          <div> Monday: Open</div>
+                          <div> Tuesday: Open</div>
+                          <div> Wednesday: Open</div>
+                          <div> Thursday: Closed</div>
+                          <div> Friday: Open</div>
+                          <div> Saturday: Open</div>
+                          <div> From: 11:00 am</div>
+                          <div> To: 9:00 pm</div>
                         </div>
-
                     </p>
                 </div>
               </div>
@@ -394,9 +394,7 @@ class Restaurants extends Component {
           <p class="card-text font-weight-bold">Reviews</p>
           {this.state.reviews.map (entry => (
             <Review review={entry} />
-
           ))}
-
         </div>
       </div>
 

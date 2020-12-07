@@ -55,6 +55,7 @@ const DishType = new GraphQLObjectType({
   fields: () => ({
     id: { type: GraphQLID },
     rid: { type: GraphQLID },
+    rname: { type: GraphQLString },
     dname: { type: GraphQLString },
     dingredients: { type: GraphQLString },
     dprice: { type: GraphQLFloat },
@@ -321,6 +322,7 @@ const Mutation = new GraphQLObjectType({
       type: SingleDishReturnType,
       args: {
         rid: { type: GraphQLID },
+        rname: { type: GraphQLString },
         dname: { type: GraphQLString },
         dingredients: { type: GraphQLString },
         dprice: { type: GraphQLFloat },
@@ -328,8 +330,10 @@ const Mutation = new GraphQLObjectType({
         durl: { type: GraphQLString },
       },
       async resolve(parent, args) {
+        console.log('Add dish hit')
         const newDish = new Dishes({
           rid: args.rid,
+          rname: args.rname,
           dname: args.dname,
           dingredients: args.dingredients,
           dprice: args.dprice,
@@ -338,6 +342,7 @@ const Mutation = new GraphQLObjectType({
         });
         const savedDish = await newDish.save();
         if (savedDish) {
+          console.log('returned 200')
           return { status: 200, entity: newDish };
         }
         return { status: 401 };

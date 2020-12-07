@@ -24,6 +24,7 @@
     "rules": {
         "max-len": "off",
         "react/prop-types": "off",
-        "jsx-quotes": "off"
+        "jsx-quotes": "off",
+        "no-console": "off"
     }
 }

@@ -65,7 +65,7 @@ class restLogin extends Component {
       const { status, entity } = response.data.loginRestaurant;
       if(status == 200){
 
-        this.props.update('RID', entity.rid)
+        this.props.update('RID', entity.id)
         this.props.update('REMAIL', entity.remail)
         this.props.update('RPASSWORD', entity.rpassword)
         this.props.update('RNAME', entity.rname)
@@ -77,7 +77,8 @@ class restLogin extends Component {
         this.props.update('RADDRESS', entity.raddress)
         this.props.update('RCUISINE', entity.rcuisine)
         this.props.update('RDELIVERY', entity.rdelivery)
-        //this.props.update('RRATING', entity.rdelivery)
+        this.props.login()
+        this.props.restaurantLogin()
         this.setState({
           authFlag : true
         })

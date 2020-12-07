@@ -137,3 +137,35 @@ export const updateRestaurantLocationMutation = gql`
     }
   }
 `;
+
+export const addDishMutation = gql`
+  mutation (
+    $rid: ID,
+    $rname: String,
+    $dname: String,
+    $dingredients: String,
+    $dprice: Float,
+    $dcategory: String,
+    $durl: String,
+  ) {
+    addDish(
+      rid: $rid,
+      rname: $rname,
+      dname: $dname,
+      dingredients: $dingredients,
+      dprice: $dprice,
+      dcategory: $dcategory,
+      durl: $durl,
+    ) {
+      status
+      entity {
+        id
+        rname
+        dname
+        dingredients
+        dcategory
+        durl 
+      }
+    }
+  }
+`;

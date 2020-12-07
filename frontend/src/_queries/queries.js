@@ -48,7 +48,7 @@ export const getRestaurantQuery = gql `
   }
 `;
 
-export const getRestaurantsQuery = gql `
+export const getRestaurantsQuery = gql`
   {
     restaurants {
       id
@@ -60,6 +60,24 @@ export const getRestaurantsQuery = gql `
       cphoto
       cfavrest
       cfavcuisine
+    }
+  }
+`;
+
+export const getDishesQuery = gql`
+  query ( $rid: ID ) {
+    dishes(
+      rid: $rid,
+    ) {
+      status
+      entity {
+        id
+        rid
+        dname
+        dingredients
+        dcategory
+        durl 
+      }
     }
   }
 `;
