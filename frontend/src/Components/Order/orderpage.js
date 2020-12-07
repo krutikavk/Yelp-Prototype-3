@@ -77,22 +77,21 @@ class Orderpage extends Component {
 
   submitChange = (event) => {
     event.preventDefault();
-    
-    //set the with credentials to true
-    axios.defaults.withCredentials = true;
     console.log("submit change hit")
-    let url = 'http://localhost:3001/orders/' + this.props.location.query.oid;
-
+    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common.authorization = localStorage.getItem('token');
+    // let url = 'http://localhost:3001/orders/' + this.props.location.query.oid;
+    let url = `${process.env.REACT_APP_BACKEND}/orders/${this.props.location.query.oid}`;
     let data = {
       ostatus: this.state.ostatus,
       otype: this.state.otype,
     }
+    console.log('data: ', data);
 
     axios.put(url, data)
       .then(response => {
         console.log("Status Code : ",response.status);
         if(response.status === 200){
-
           this.setState({
             updated: true,
             ostatusToChange: false,
@@ -103,32 +102,6 @@ class Orderpage extends Component {
         console.log("Update failed")
     });
   }
-
-
-
-  componentDidMount() {
-
-    //Get all dishes from order
-    //set the with credentials to true
-    axios.defaults.withCredentials = true;
-    let url = 'http://localhost:3001/orders/' + this.props.location.query.oid + '/dishes';
-
-    axios.get(url)
-      .then(response => {
-        console.log("Status Code : ",response.status);
-        if(response.status === 200){
-
-          console.log("dishes", response.data);
-          this.setState({
-            dishes: [...response.data]
-          })
-        }
-      }).catch(err =>{
-        console.log("No dishes found")
-    });
-  }
-
-
 
   render() {
     let redirectVar = null;
@@ -143,7 +116,6 @@ class Orderpage extends Component {
     if(this.state.updated === true) {
       status = this.state.ostatus;
     }
-
 
     if(this.props.isLogged === false) {
       //customer login
@@ -218,14 +190,6 @@ class Orderpage extends Component {
                 <div class="card-footer">
                   <button disabled="true" id="btnLogin" className="btn btn-danger" onClick={this.editOrder}>Edit Order</button>
                   <br/>Dishes:
-                  {this.state.dishes.map (item => {  
-                    return (       
-                      <div>
-                        <div>Item: {item.dname}  Quantity: {item.odquantity}</div>
-                        <br/>
-                      </div>
-                    )}
-                  )}
                 </div>
               </div>
             </div>

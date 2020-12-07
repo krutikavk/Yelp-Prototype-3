@@ -131,26 +131,6 @@ class Restaurants extends Component {
     let rid = (this.props.whoIsLogged === true) ? this.props.rid : this.props.location.query.rid;
     console.log("rid on restaurantpage", rid)
     /*
-    //Get working hours
-    let getHours = 'http://localhost:3001/restaurants/' + rid + '/hours'
-    axios.get(getHours)
-    .then(response => {
-      if(response.status === 200){
-
-        //When results return multiple rows, rowdatapacket object needs to be converted to JSON object again 
-        //use JSON.parse(JSON.stringify()) to convert back to JSON object
-        let temp = JSON.parse(JSON.stringify(response.data));
-
-        this.setState({
-          hours: response.data[0]
-        })
-      }
-
-    }).catch(err =>{
-        console.log("No response hours")
-    });
-    */
-    /*
     //Get all reviews
     let getReviews = 'http://localhost:3001/restaurants/' + rid + '/reviews'
     axios.get(getReviews)
@@ -187,43 +167,10 @@ class Restaurants extends Component {
         console.log("No response")
     });
     */
-
-    //Get all pictures--FOR NOW, SINGLE IMAGE
-    //Display images from array
-    //Reference: https://stackoverflow.com/questions/42410164/display-array-of-images-in-react
-    /*
-    let getPics = 'http://localhost:3001/pictures' + this.state.restaurant.rid
-    axios.get(getPics)
-    .then(response => {
-      console.log("Status Code : ",response.data);
-      if(response.status === 200){
-        //When results return multiple rows, rowdatapacket object needs to be converted to JSON object again 
-        //use JSON.parse(JSON.stringify()) to convert back to JSON object
-        let temp = JSON.parse(JSON.stringify(response.data));
-        this.setState({
-          pictures: [...temp]
-        })
-      }
-
-
-    }).catch(err =>{
-        console.log("No response")
-    });
-
-    */
   }
 
   render() {
-
-    /*
-    var pictures = this.state.pictures.map(function(image) {
-      return (<img src={image} alt="" rounded ></img>);
-    });
-    */
- 
-
-    //If customer is logged in, take information from props passed to the page
-
+    // If customer is logged in, take information from props passed to the page
     let restaurantprofile = {};
 
     let buttonDisplay = '';
@@ -234,7 +181,7 @@ class Restaurants extends Component {
     let updateLocation = null;
     let addEvent = null;
 
-    //If restaurant is logged in, take this info from redux state
+    // If restaurant is logged in, take this info from redux state
     if(this.props.whoIsLogged === true) {
       restaurantprofile = {
         rid: this.props.rid,

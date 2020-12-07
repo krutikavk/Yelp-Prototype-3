@@ -321,55 +321,23 @@ class Dish extends Component {
 
 
     return (
-
       <div>
-      
-      <div class="card-horizontal" >
-        <div class="img-square-wrapper">
-            <img class="img-responsive img-thumbnail" src={nachospic} alt="dish" width="200" height="200"></img>
-        </div>
-        <div class="card-body">
-          <h4 class="card-title">{this.state.dataToChange.dname} {dnameTextField}</h4>
-          <div class="card-text">{this.state.dataToChange.ddescription} {ddescriptionTextField}</div>
-          <p class="card-text">{this.state.dataToChange.dcategory} {dcategoryTextField}</p>
-          <p class="card-text">Ingredients: {this.state.dataToChange.dingredients} {dingredientsTextField}</p>
-          <p class="card-text"><h4>{this.state.dataToChange.dprice}$ {dpriceTextField}</h4></p>
-          {addToCartButton}
-        </div>
-      </div>
-      <div class="card-footer">
-
-      </div>
-      </div>
-
-      /*
-      <td class="border-0 align-middle"><button onClick={()=>this.removeEntryHandler({dname:entry.dname, dprice:entry.dprice})}  class="btn btn-primary">Remove</button></td>
-
-      
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-12 mt-3">
-            <div class="card">
-              <div class="card-horizontal">
-                <div class="img-square-wrapper">
-                    <img class="img-responsive" src={nachospic} alt="dish"></img>
-                </div>
-                <div class="card-body">
-                    <p class="card-text">{this.props.dish.ddescription}</p>
-                    <p class="card-text">Category: {this.props.dish.dcategory}</p>
-                    <p class="card-text">Ingredients: {this.props.dish.dingredients}</p>
-                    <p class="card-text"><h4>Price: {this.props.dish.dprice}$</h4></p>
-                    <button class="btn btn-primary">Add to Cart</button>
-                </div>
-              </div>
-              <div class="card-footer">
-                  <small class="text-muted">Featured!</small>
-              </div>
-            </div>
+        <div class="card-horizontal" >
+          <div class="img-square-wrapper">
+              <img class="img-responsive img-thumbnail" src={nachospic} alt="dish" width="200" height="200"></img>
+          </div>
+          <div class="card-body">
+            <h4 class="card-title">{this.state.dataToChange.dname} {dnameTextField}</h4>
+            <div class="card-text">{this.state.dataToChange.ddescription} {ddescriptionTextField}</div>
+            <p class="card-text">{this.state.dataToChange.dcategory} {dcategoryTextField}</p>
+            <p class="card-text">Ingredients: {this.state.dataToChange.dingredients} {dingredientsTextField}</p>
+            <p class="card-text"><h4>{this.state.dataToChange.dprice}$ {dpriceTextField}</h4></p>
+            {addToCartButton}
           </div>
         </div>
+        <div class="card-footer">
+        </div>
       </div>
-      */
     )
   }
 
@@ -382,11 +350,9 @@ const mapStateToProps = (state) => {
       isLogged: state.isLogged.isLoggedIn,
       whoIsLogged: state.whoIsLogged.whoIsLoggedIn,
       cartContents: state.cart.cartContents
-
     }
 }
 
-//const mapDispatchToProps = (dispatch) => { since this does not call a function directly it cannot be a function
 function mapDispatchToProps(dispatch) {  
   return {
     updateCart: (field, payload) => dispatch(updateCart(field, payload))
@@ -394,7 +360,4 @@ function mapDispatchToProps(dispatch) {
   
 }
 
-//export Login Component
-//export default Login;
-//export default connect(mapStateToProps, mapDispatchToProps())(Custsignup);
 export default connect(mapStateToProps, mapDispatchToProps)(Dish);

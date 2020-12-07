@@ -2,6 +2,9 @@ const graphql = require('graphql');
 const Customers = require('../Models/custModel');
 const Restaurants = require('../Models/restModel');
 const Dishes = require('../Models/dishModel');
+const Orders = require('../Models/orderModel');
+const OrderDish = require('../Models/orderDishModel');
+const Reviews = require('../Models/reviewModel');
 
 const {
   GraphQLObjectType,
@@ -10,9 +13,7 @@ const {
   GraphQLID,
   GraphQLInt,
   GraphQLFloat,
-  GraphQLBoolean,
   GraphQLList,
-  GraphQLNonNull,
 } = graphql;
 
 const CustType = new GraphQLObjectType({
@@ -64,6 +65,43 @@ const DishType = new GraphQLObjectType({
   }),
 });
 
+const OrderDishType = new GraphQLObjectType({
+  name: 'orderDish',
+  fields: () => ({
+    oid: { type: GraphQLID },
+    did: { type: GraphQLID },
+    dname: { type: GraphQLString },
+    dprice: { type: GraphQLFloat },
+    dquantity: { type: GraphQLInt },
+  }),
+});
+
+const OrderType = new GraphQLObjectType({
+  name: 'Order',
+  fields: () => ({
+    id: { type: GraphQLID },
+    cid: { type: GraphQLID },
+    rid: { type: GraphQLID },
+    ooption: { type: GraphQLString },
+    ostatus: { type: GraphQLString },
+    otype: { type: GraphQLString },
+    otime: { type: GraphQLString },
+    oaddress: { type: GraphQLString },
+  }),
+});
+
+const ReviewType = new GraphQLObjectType({
+  name: 'Review',
+  fields: () => ({
+    id: { type: GraphQLID },
+    retext: { type: GraphQLID },
+    rerating: { type: GraphQLString },
+    cid: { type: GraphQLID },
+    rid: { type: GraphQLID },
+    rdate: { type: GraphQLString },
+  }),
+});
+
 const SingleCustomerReturnType = new GraphQLObjectType({
   name: 'SingleCustomerReturn',
   fields: () => ({
@@ -109,6 +147,38 @@ const DishesReturnType = new GraphQLObjectType({
   fields: () => ({
     status: { type: GraphQLInt },
     entity: { type: GraphQLList(DishType) },
+  }),
+});
+
+const SingleOrderReturnType = new GraphQLObjectType({
+  name: 'SingleOrderReturn',
+  fields: () => ({
+    status: { type: GraphQLInt },
+    entity: { type: OrderType },
+  }),
+});
+
+const OrdersReturnType = new GraphQLObjectType({
+  name: 'OrdersReturn',
+  fields: () => ({
+    status: { type: GraphQLInt },
+    entity: { type: GraphQLList(OrderType) },
+  }),
+});
+
+const SingleReviewReturnType = new GraphQLObjectType({
+  name: 'SingleReviewReturn',
+  fields: () => ({
+    status: { type: GraphQLInt },
+    entity: { type: ReviewType },
+  }),
+});
+
+const ReviewsReturnType = new GraphQLObjectType({
+  name: 'ReviewsReturn',
+  fields: () => ({
+    status: { type: GraphQLInt },
+    entity: { type: GraphQLList(ReviewType) },
   }),
 });
 
@@ -181,6 +251,62 @@ const RootQuery = new GraphQLObjectType({
         const dishes = await Dishes.find({ rid: args.rid });
         if (dishes) {
           return { status: 200, entity: dishes };
+        }
+        return { status: 401 };
+      },
+    },
+
+    reviewsForRestaurant: {
+      type: ReviewsReturnType,
+      args: {
+        rid: { type: GraphQLID },
+      },
+      async resolve(parent, args) {
+        const reviews = await Reviews.find({ rid: args.rid });
+        if (reviews) {
+          return { status: 200, entity: reviews };
+        }
+        return { status: 401 };
+      },
+    },
+
+    reviewsForCustomer: {
+      type: ReviewsReturnType,
+      args: {
+        cid: { type: GraphQLID },
+      },
+      async resolve(parent, args) {
+        const reviews = await Reviews.find({ cid: args.cid });
+        if (reviews) {
+          return { status: 200, entity: reviews };
+        }
+        return { status: 401 };
+      },
+    },
+
+    ordersForCustomer: {
+      type: SingleOrderReturnType,
+      args: {
+        cid: { type: GraphQLID },
+      },
+      async resolve(parent, args) {
+        const orders = await Orders.find({ cid: args.cid });
+        if (orders) {
+          return { status: 200, entity: orders };
+        }
+        return { status: 401 };
+      },
+    },
+
+    ordersForRestaurant: {
+      type: OrdersReturnType,
+      args: {
+        rid: { type: GraphQLID },
+      },
+      async resolve(parent, args) {
+        const orders = await Orders.find({ rid: args.rid });
+        if (orders) {
+          return { status: 200, entity: orders };
         }
         return { status: 401 };
       },
@@ -330,7 +456,7 @@ const Mutation = new GraphQLObjectType({
         durl: { type: GraphQLString },
       },
       async resolve(parent, args) {
-        console.log('Add dish hit')
+        console.log('Add dish hit');
         const newDish = new Dishes({
           rid: args.rid,
           rname: args.rname,
@@ -342,8 +468,92 @@ const Mutation = new GraphQLObjectType({
         });
         const savedDish = await newDish.save();
         if (savedDish) {
-          console.log('returned 200')
+          console.log('returned 200');
           return { status: 200, entity: newDish };
+        }
+        return { status: 401 };
+      },
+    },
+
+    addOrder: {
+      type: SingleOrderReturnType,
+      args: {
+        cid: { type: GraphQLID },
+        rid: { type: GraphQLID },
+        ooption: { type: GraphQLString },
+      },
+      async resolve(parent, args) {
+        console.log('Add order hit');
+        const now = new Date();
+        const jsonDate = now.toJSON();
+        const joined = new Date(jsonDate);
+        const newOrder = new Orders({
+          cid: args.cid,
+          rid: args.rid,
+          ooption: args.ooption,
+          otime: joined,
+        });
+        const savedOrder = await newOrder.save();
+        if (savedOrder) {
+          console.log('returned 200');
+          return { status: 200, entity: newOrder };
+        }
+        return { status: 401 };
+      },
+    },
+
+    addOrderDish: {
+      type: SingleOrderReturnType,
+      args: {
+        oid: { type: GraphQLID },
+        did: { type: GraphQLID },
+        dname: { type: GraphQLString },
+        dprice: { type: GraphQLFloat },
+        dquantity: { type: GraphQLInt },
+      },
+      async resolve(parent, args) {
+        console.log('Add orderdish hit');
+        const newOrderDish = new OrderDish({
+          oid: args.oid,
+          did: args.did,
+          dname: args.dname,
+          dquantity: args.dprice,
+          dprice: args.dquantity,
+        });
+        const savedOrderDish = await newOrderDish.save();
+        if (savedOrderDish) {
+          console.log('returned 200');
+          return { status: 200 };
+        }
+        return { status: 401 };
+      },
+    },
+
+    addReview: {
+      type: SingleReviewReturnType,
+      args: {
+        retext: { type: GraphQLString },
+        rerating: { type: GraphQLFloat },
+        rdate: { type: GraphQLString },
+        cid: { type: GraphQLID },
+        rid: { type: GraphQLID },
+      },
+      async resolve(parent, args) {
+        console.log('Add orderdish hit');
+        const now = new Date();
+        const jsonDate = now.toJSON();
+        const joined = new Date(jsonDate);
+        const newReview = new Reviews({
+          retext: args.retext,
+          rerating: args.rerating,
+          cid: args.cid,
+          rid: args.rid,
+          rdate: joined,
+        });
+        const savedReview = await newReview.save();
+        if (savedReview) {
+          console.log('returned 200');
+          return { status: 200 , entity: newReview };
         }
         return { status: 401 };
       },
