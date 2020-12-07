@@ -1,49 +1,61 @@
 import { gql } from 'apollo-boost';
 
-export const getCustomerQuery = gql `
+export const getCustomerQuery = gql`
   {
     customer{
-      id
-      cname
-      cpassword
-      cphone
-      cabout
-      cphone
-      cphoto
-      cfavrest
-      cfavcuisine
+      status 
+      entity {
+        id
+        cname
+        cpassword
+        cphone
+        cabout
+        cphone
+        cphoto
+        cfavrest
+        cfavcuisine
+      }
     }
   }
 `;
 
-export const getCustomersQuery = gql `
+export const getCustomersQuery = gql`
   {
     customer{
-      id
-      cname
-      cpassword
-      cphone
-      cabout
-      cphone
-      cphoto
-      cfavrest
-      cfavcuisine
+      status 
+      entity {
+        id
+        cname
+        cpassword
+        cphone
+        cabout
+        cphone
+        cphoto
+        cfavrest
+        cfavcuisine
+      }
     }
   }
 `;
 
-export const getRestaurantQuery = gql `
+export const getRestaurantQuery = gql`
   {
     restaurant {
-      id
-      cname
-      cpassword
-      cphone
-      cabout
-      cphone
-      cphoto
-      cfavrest
-      cfavcuisine
+      status
+      entity {
+        id
+        rname
+        remail
+        rpassword
+        rphone
+        rabout
+        rcuisine
+        rdelivery
+        raddress
+        rlatitude
+        rlongitude
+        rdish
+      }
     }
   }
 `;
@@ -51,15 +63,21 @@ export const getRestaurantQuery = gql `
 export const getRestaurantsQuery = gql`
   {
     restaurants {
-      id
-      cname
-      cpassword
-      cphone
-      cabout
-      cphone
-      cphoto
-      cfavrest
-      cfavcuisine
+      status
+      entity {
+        id
+        rname
+        remail
+        rpassword
+        rphone
+        rabout
+        rcuisine
+        rdelivery
+        raddress
+        rlatitude
+        rlongitude
+        rdish
+      }
     }
   }
 `;

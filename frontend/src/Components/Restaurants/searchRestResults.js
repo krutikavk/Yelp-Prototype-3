@@ -1,50 +1,22 @@
+
 import React, { Component } from 'react';
 import '../../App.css';
-import {Redirect} from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import {connect} from 'react-redux';
 import {update, login, logout} from '../../_actions';
 import Navbar from '../Navbar/navbar';
 
-import { RestaurantListingsProvider, RestaurantListingsConsumer} from '../../_context/restaurantListingsProvider';
+import RestaurantListingsProvider, { RestaurantListingsConsumer } from '../../_context/restaurantListingsProvider';
 import Restaurant from './restaurantcard';
 import MapSection from '../Map/map';
 import RestFilter from '../Filter/restaurantfilter';
 
-
-
 class SearchRestResults extends Component {
-
   render() {
 
     let redirectVar = null;
-    /*
-    let id = '';
-    let type = '';
 
-    if(this.props.isLogged === false) {
-      //customer login
-      redirectVar = <Redirect to="/login"/>
-    } else {
-      if(this.props.whoIsLogged === false) {
-        //customer login
-        id = this.props.cid
-        type = 'customers'
-      } else{
-        id = this.props.rid
-        type = 'restaurants'
-      }
-    }
-
-
-    <div className="map">
-      <div className="google-map">
-        <MapSection location={restaurantPins} zoomLevel={17} />
-      </div>
-    </div>
-
-    */
-
-    //Accessing props from Navbar as this.props.location.state.xxx
+    // Accessing props from Navbar as this.props.location.state.xxx
     console.log("Passed props", this.props)
 
     return (
@@ -106,13 +78,7 @@ class SearchRestResults extends Component {
           </RestaurantListingsProvider >
         </section>
       </div>
-
-      
-
-
-
     )
-
   }
 }
 
@@ -125,15 +91,12 @@ const mapStateToProps = (state) => {
     }
 }
 
-//const mapDispatchToProps = (dispatch) => { since this does not call a function directly it cannot be a function
-
-function mapDispatchToProps(dispatch) {  
+function mapDispatchToProps(dispatch) {
   return {
     update : (field, payload) => dispatch(update(field, payload)),
     login: () => dispatch(login()),
-    logout: () => dispatch(logout())
+    logout: () => dispatch(logout()),
   }
-  
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchRestResults);

@@ -125,8 +125,7 @@ class Restaurants extends Component {
   //Menu handler for view dishes has to be here and not on restaurant page (only the render component is returned there)
 
   componentWillMount() {
-    console.log(" restaurantpage component did mount rid", this.props.rid)
-    console.log(" restaurantpage component did mount whoIsLogged", this.props.whoIsLogged)
+    console.log(" restaurantpage component did mount rid", this.props)
 
     let rid = (this.props.whoIsLogged === true) ? this.props.rid : this.props.location.query.rid;
     console.log("rid on restaurantpage", rid)
@@ -228,6 +227,7 @@ class Restaurants extends Component {
       
 
     } else {
+      console.log('here')
 
       restaurantprofile = {
         rid: this.props.location.query.rid,
@@ -244,6 +244,7 @@ class Restaurants extends Component {
         rcuisine: this.props.location.query.rcuisine,
         rdelivery: this.props.location.query.rdelivery,
       }
+      console.log('restaurant profile: ', restaurantprofile)
       buttonDisplay = 'Place Order'
       addReview = <Link to= {{
                         pathname: '/restaurant/addreview',

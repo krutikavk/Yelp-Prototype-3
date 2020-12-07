@@ -22,6 +22,7 @@ class Dishes extends Component {
   }
 
   async componentDidMount() {
+    console.log('props: ', this.props);
     const response = await this.props.client.query({
       query: getDishesQuery,
       variables: { rid: this.props.location.query.rid },

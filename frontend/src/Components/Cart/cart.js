@@ -5,6 +5,9 @@ import {Redirect} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {update, updateCart, login, logout, customerLogin} from '../../_actions';
 import Navbar from '../Navbar/navbar';
+import { graphql } from 'react-apollo';
+import compose from 'lodash.flowright';
+import { addOrderMutation, addOrderDishMutation } from '../../_mutations/mutations';
 
 class Cart extends Component{
 
@@ -42,8 +45,7 @@ class Cart extends Component{
 
 
   placeOrderHandler = (event) => {
-
-
+    event.preventDefault();
     let orderdata = {
       cid: this.props.cid, 
       rid: this.props.cartContents[0].rid, 
@@ -53,10 +55,8 @@ class Cart extends Component{
       oaddress: '', 
     }
 
-
     var oid = -1;
     //array this.props.cartContents has dname and dquantity
-
 
     let orderdish = {
       oid: '',
@@ -65,7 +65,74 @@ class Cart extends Component{
       dquantity: '',
     }
 
+    const { addOrderMutation, addOrderDishMutation } = this.props;
+    addOrderMutation({
+      variables: {
+        cid : this.state.email,
+        rid: this.props.cartContents[0].rid, 
+        ooption: this.state.ooption, 
+      },
+      // refetchQueries: [{ query: getCustomerQuery() }]
+    }).then(response => {
+      const { status, entity } = response.data.addOrder;
+      if(status == 200){
+        let oid = entity.id;
+        let data = [];
+        this.props.cartContents.forEach(dish => {
+          console.log("Dish name: ", dish.dname)
+          console.log("Dish quantity: ", dish.dquantity)
+          let temp = {
+            oid: oid,
+            did: dish.did,
+            dname: dish.dname,
+            dquantity: dish.dquantity
+          } 
+          data.push(temp)
+          console.log('data', data)
+        });
 
+        let promiseArray = data.map(item => {
+          addOrderDishMutation({
+            variables: {
+              oid: item.oid,
+              did: item.did,
+              dname: item.dname,
+              dquantity: item.dquantity,
+            },
+          })
+        });
+        Promise.all( promiseArray )
+        .then(
+          results => {
+            /*
+            console.log('results: ', results)
+            let err = results.data.addOrderDish.filter(entry => 
+              entry.status !== 200
+            )
+            if(err.length === 0) {
+              this.props.updateCart('ORDER');
+              this.setState({
+                placed: true
+              })
+              console.log("Order placed")
+              alert("Order Placed")
+            }
+            */
+            this.setState({
+                placed: true
+              })
+            console.log("Order placed")
+            alert("Order Placed")
+          }
+        )
+        .catch(console.log)
+
+      } else {
+        alert('Error Placing order');
+      }
+    });
+
+    /*
     axios.post('http://localhost:3001/orders', orderdata)
       .then(response => {
         console.log("Status Code : ",response.status);
@@ -122,8 +189,7 @@ class Cart extends Component{
             authFlag : false
         })
     });
-
-    //
+    */
   }
 
 
@@ -289,7 +355,4 @@ function mapDispatchToProps(dispatch) {
   
 }
 
-//export Login Component
-//export default Login;
-//export default connect(mapStateToProps, mapDispatchToProps())(Custsignup);
-export default connect(mapStateToProps, mapDispatchToProps)(Cart);
+export default compose(graphql(addOrderMutation, { name: 'addOrderMutation' }), graphql(addOrderDishMutation, { name: 'addOrderDishMutation' }), connect(mapStateToProps, mapDispatchToProps))(Cart);

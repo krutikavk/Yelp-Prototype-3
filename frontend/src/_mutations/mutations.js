@@ -169,3 +169,47 @@ export const addDishMutation = gql`
     }
   }
 `;
+
+export const addOrderMutation = gql`
+  mutation (
+    $cid: ID,
+    $rid: ID,
+    $ooption: String,
+  ) {
+    addOrder(
+      cid: $cid,
+      rid: $rid,
+      ooption: $ooption,
+    ) {
+      status
+      entity {
+        id
+        rid
+        cid
+        ooption
+        ostatus
+        otime 
+      }
+    }
+  }
+`;
+
+export const addOrderDishMutation = gql`
+  mutation (
+    $oid: ID,
+    $did: ID,
+    $dname: String,
+    $dprice: Float,
+    $dquantity: Int,
+  ) {
+    addOrderDish(
+      oid: $oid,
+      did: $did,
+      dname: $dname,
+      dprice: $dprice,
+      dquantity: $dquantity,
+    ) {
+      status
+    }
+  }
+`;

@@ -63,7 +63,7 @@ class Dish extends Component {
         alert("Please place orders for one restaurant at a time")
       } else {
         let data = {
-          did: this.props.dish.did,
+          did: this.props.dish.id,
           dname: this.props.dish.dname,            //dish name
           rid: this.props.rid,              //restaurant
           dquantity: 1,        //dish quantity

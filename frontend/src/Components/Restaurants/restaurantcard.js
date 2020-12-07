@@ -13,7 +13,6 @@ class Restaurant extends Component {
     this.state = {
       dishes: false
     }
-
   }
 
   render() {
@@ -23,7 +22,7 @@ class Restaurant extends Component {
       <Link to ={{
                   pathname: '/restaurant',
                   query: {
-                    rid: `${this.props.restaurant.rid}`, 
+                    rid: `${this.props.restaurant.id}`, 
                     remail: `${this.props.restaurant.remail}`,
                     rname: `${this.props.restaurant.rname}`,
                     rphone: `${this.props.restaurant.rphone}`,
