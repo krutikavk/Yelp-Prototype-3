@@ -101,8 +101,8 @@ export const getDishesQuery = gql`
 `;
 
 export const getRestaurantsByCuisineQuery = gql`
-  {
-    getRestaurantsByCuisine ( $rcuisine: String ) {
+  query ( $rcuisine: String ) {
+    getRestaurantsByCuisine ( rcuisine: $rcuisine ) {
       status
       entity {
         id
@@ -123,8 +123,8 @@ export const getRestaurantsByCuisineQuery = gql`
 `;
 
 export const getRestaurantsByDeliveryQuery = gql`
-  {
-    getRestaurantsByDelivery ( $rdelivery: String ) {
+  query ( $rdelivery: String ) {
+    getRestaurantsByDelivery ( rdelivery: $rdelivery ) {
       status
       entity {
         id
@@ -143,5 +143,3 @@ export const getRestaurantsByDeliveryQuery = gql`
     }
   }
 `;
-
-// export {getCustomerQuery, getCustomersQuery, getRestaurantQuery, getRestaurantsQuery};

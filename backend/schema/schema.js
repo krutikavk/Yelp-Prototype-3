@@ -1,4 +1,5 @@
 const graphql = require('graphql');
+const bcrypt = require('bcrypt');
 const Customers = require('../Models/custModel');
 const Restaurants = require('../Models/restModel');
 const Dishes = require('../Models/dishModel');
@@ -285,13 +286,14 @@ const RootQuery = new GraphQLObjectType({
     },
 
     ordersForCustomer: {
-      type: SingleOrderReturnType,
+      type: OrdersReturnType,
       args: {
         cid: { type: GraphQLID },
       },
       async resolve(parent, args) {
         const orders = await Orders.find({ cid: args.cid });
         if (orders) {
+          console.log('orders: ', orders);
           return { status: 200, entity: orders };
         }
         return { status: 401 };
@@ -384,10 +386,11 @@ const Mutation = new GraphQLObjectType({
         const now = new Date();
         const jsonDate = now.toJSON();
         const joined = new Date(jsonDate);
+        const hash = await bcrypt.hash(args.cpassword, 10);
         const newCustomer = new Customers({
           cname: args.cname,
           cemail: args.cemail,
-          cpassword: args.cpassword,
+          cpassword: hash,
           cjoined: joined,
         });
         const saved = await newCustomer.save();
@@ -410,10 +413,11 @@ const Mutation = new GraphQLObjectType({
         if (restaurant) {
           return { status: 401 };
         }
+        const hash = await bcrypt.hash(args.rpassword, 10);
         const newRestaurant = new Restaurants({
           rname: args.rname,
           remail: args.remail,
-          rpassword: args.rpassword,
+          rpassword: hash,
         });
         newRestaurant.save();
         return { status: 200, entity: newRestaurant };
@@ -442,7 +446,8 @@ const Mutation = new GraphQLObjectType({
         rpassword: { type: GraphQLString },
       },
       async resolve(parent, args) {
-        const restaurant = await Restaurants.findOne({ remail: args.remail, rpassword: args.rpassword });
+        const restaurant = await Restaurants.findOne({ remail: args.remail });
+        const loginTrue = await bcrypt.compare(restaurant.rpassword, args.rpassword);
         if (restaurant) {
           return { status: 200, entity: restaurant };
         }
@@ -533,7 +538,10 @@ const Mutation = new GraphQLObjectType({
         cid: { type: GraphQLID },
         rid: { type: GraphQLID },
         ooption: { type: GraphQLString },
+        ostatus: { type: GraphQLString },
+        otime: { type: GraphQLString },
       },
+
       async resolve(parent, args) {
         console.log('Add order hit');
         const now = new Date();
@@ -606,6 +614,24 @@ const Mutation = new GraphQLObjectType({
         if (savedReview) {
           console.log('returned 200');
           return { status: 200, entity: newReview };
+        }
+        return { status: 401 };
+      },
+    },
+
+    updateOrder: {
+      type: SingleOrderReturnType,
+      args: {
+        ostatus: { type: GraphQLString },
+        oid: { type: GraphQLString },
+      },
+      async resolve(parent, args) {
+        const updateData = {
+          ostatus: args.ostatus,
+        };
+        const order = Orders.findByIdAndUpdate(args.oid, updateData, { new: true });
+        if (order) {
+          return { status: 200, entity: order };
         }
         return { status: 401 };
       },

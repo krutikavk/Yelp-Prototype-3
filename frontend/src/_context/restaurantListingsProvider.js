@@ -2,7 +2,7 @@ import * as React from 'react';
 import axios from 'axios';
 import { graphql, compose, withApollo } from 'react-apollo';
 import composeLodash from 'lodash.flowright';
-import { getRestaurantsQuery, getRestaurantsByCuisineQuery } from '../_queries/queries';
+import { getRestaurantsQuery, getRestaurantsByCuisineQuery, getRestaurantsByDeliveryQuery } from '../_queries/queries';
 
 const DefaultState = {
   restaurantListings: [],
@@ -45,9 +45,9 @@ class RestaurantListingsProvider extends React.Component {
   }
 
   async getRestaurantByCuisine(cuisine) {
-
     const response = await this.props.client.query({
       query: getRestaurantsByCuisineQuery,
+      variables: { rcuisine: cuisine}
     });
     const { status, entity } = response.data.getRestaurantsByCuisine;
     if (status === 200) {     
@@ -71,7 +71,32 @@ class RestaurantListingsProvider extends React.Component {
     return;
   }
 
-  getRestaurantByDtype(delivery) {
+  async getRestaurantByDtype(delivery) {
+    const response = await this.props.client.query({
+      query: getRestaurantsByDeliveryQuery,
+      variables: { rdelivery: delivery }
+    });
+    const { status, entity } = response.data.getRestaurantsByDelivery;
+    if (status === 200) {     
+      let locations = [];
+      entity.forEach(item => {
+        let location = {
+          name: item.rname,
+          lat: item.rlatitude,
+          lng: item.rlongitude
+        }
+        locations.push(location)
+      });
+
+      let pins = {
+        restaurants: locations
+      }
+      this.setState({ 
+        restaurantListings: entity, 
+      }) 
+    }
+    return;
+    /*
     let url = 'http://localhost:3001/restaurants/search/rdelivery';
     const data = {
       rdelivery : delivery,
@@ -117,6 +142,7 @@ class RestaurantListingsProvider extends React.Component {
     });
 
     return;
+    */
   }
 
   getRestaurantByDname(dname) {
