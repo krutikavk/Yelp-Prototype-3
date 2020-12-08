@@ -431,8 +431,9 @@ const Mutation = new GraphQLObjectType({
         cpassword: { type: GraphQLString },
       },
       async resolve(parent, args) {
-        const customer = await Customers.findOne({ cemail: args.cemail, cpassword: args.cpassword });
-        if (customer) {
+        const customer = await Customers.findOne({ cemail: args.cemail });
+        const loginTrue = await bcrypt.compare(args.cpassword, customer.cpassword);
+        if (loginTrue) {
           return { status: 200, entity: customer };
         }
         return { status: 401 };
@@ -447,8 +448,9 @@ const Mutation = new GraphQLObjectType({
       },
       async resolve(parent, args) {
         const restaurant = await Restaurants.findOne({ remail: args.remail });
-        const loginTrue = await bcrypt.compare(restaurant.rpassword, args.rpassword);
-        if (restaurant) {
+        const loginTrue = await bcrypt.compare(args.rpassword, restaurant.rpassword);
+        console.log(loginTrue);
+        if (loginTrue) {
           return { status: 200, entity: restaurant };
         }
         return { status: 401 };
