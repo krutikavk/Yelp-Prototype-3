@@ -311,6 +311,58 @@ const RootQuery = new GraphQLObjectType({
         return { status: 401 };
       },
     },
+
+    getRestaurantsByDishName: {
+      type: RestaurantsReturnType,
+      args: {
+        dname: { type: GraphQLString },
+      },
+      async resolve(parent, args) {
+        const ridArray = await Dishes.find({ dname: args.dname }).select({ rid: 1 });
+        console.log('ridArray: ', ridArray);
+        // return { status: 200 };
+
+        const promiseArray = ridArray.map((item) => Restaurants.findById(item.rid));
+        Promise.all(promiseArray)
+          .then(
+            (results) => {
+              //possible bug here
+              const restaurants = results.filter((entry) => !entry.error);
+              console.log('restaurants returned: ', results);
+              return { status: 200, entity: restaurants };
+            },
+          )
+          .catch(console.log);
+      },
+    },
+
+    getRestaurantsByCuisine: {
+      type: RestaurantsReturnType,
+      args: {
+        rcuisine: { type: GraphQLString },
+      },
+      async resolve(parent, args) {
+        const restaurants = await Restaurants.find({ rcuisine: args.rcuisine });
+        if (restaurants) {
+          return { status: 200, entity: restaurants };
+        }
+        return { status: 401 };
+      },
+    },
+
+    getRestaurantsByDelivery: {
+      type: RestaurantsReturnType,
+      args: {
+        rdelivery: { type: GraphQLString },
+      },
+      async resolve(parent, args) {
+        const restaurants = await Restaurants.find({ rdelivery: args.rdelivery });
+        if (restaurants) {
+          return { status: 200, entity: restaurants };
+        }
+        return { status: 401 };
+      },
+    },
   },
 });
 
@@ -553,7 +605,7 @@ const Mutation = new GraphQLObjectType({
         const savedReview = await newReview.save();
         if (savedReview) {
           console.log('returned 200');
-          return { status: 200 , entity: newReview };
+          return { status: 200, entity: newReview };
         }
         return { status: 401 };
       },

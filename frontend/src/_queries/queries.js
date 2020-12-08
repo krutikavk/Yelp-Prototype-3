@@ -100,4 +100,48 @@ export const getDishesQuery = gql`
   }
 `;
 
+export const getRestaurantsByCuisineQuery = gql`
+  {
+    getRestaurantsByCuisine ( $rcuisine: String ) {
+      status
+      entity {
+        id
+        rname
+        remail
+        rpassword
+        rphone
+        rabout
+        rcuisine
+        rdelivery
+        raddress
+        rlatitude
+        rlongitude
+        rdish
+      }
+    }
+  }
+`;
+
+export const getRestaurantsByDeliveryQuery = gql`
+  {
+    getRestaurantsByDelivery ( $rdelivery: String ) {
+      status
+      entity {
+        id
+        rname
+        remail
+        rpassword
+        rphone
+        rabout
+        rcuisine
+        rdelivery
+        raddress
+        rlatitude
+        rlongitude
+        rdish
+      }
+    }
+  }
+`;
+
 // export {getCustomerQuery, getCustomersQuery, getRestaurantQuery, getRestaurantsQuery};

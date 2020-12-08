@@ -2,7 +2,7 @@ import * as React from 'react';
 import axios from 'axios';
 import { graphql, compose, withApollo } from 'react-apollo';
 import composeLodash from 'lodash.flowright';
-import { getRestaurantsQuery } from '../_queries/queries';
+import { getRestaurantsQuery, getRestaurantsByCuisineQuery } from '../_queries/queries';
 
 const DefaultState = {
   restaurantListings: [],
@@ -44,51 +44,30 @@ class RestaurantListingsProvider extends React.Component {
     return;
   }
 
-  getRestaurantByCuisine(cuisine) {
-    let url = 'http://localhost:3001/restaurants/search/cuisine';
-    const data = {
-      rcuisine : cuisine,
-    }
-    console.log("cuisine data sent", data)
-    axios.post(url, data)
-      .then(response => {
-        if(response.status === 200){
-          //When results return multiple rows, rowdatapacket object needs to be converted to JSON object again 
-          //use JSON.parse(JSON.stringify()) to convert back to JSON object
-          console.log("filtered by cuisine:", response.data)
-          let locations = [];
-          response.data.forEach(item => {
-            let location = {
-              name: item.rname,
-              lat: item.rlatitude,
-              lng: item.rlongitude
-            }
-            locations.push(location)
-          });
+  async getRestaurantByCuisine(cuisine) {
 
-          let pins = {
-            restaurants: locations
-          }
-
-          response.data = response.data.sort((a, b) => 
-            Math.sqrt(
-              ((a.rlatitude-this.props.searchLat)*(a.rlatitude-this.props.searchLat)) +
-              ((a.rlongitude-this.props.searchLng)*(a.rlongitude-this.props.searchLng))
-            ) <
-            Math.sqrt(
-              ((b.rlatitude-this.props.searchLat)*(b.rlatitude-this.props.searchLat)) +
-              ((b.rlongitude-this.props.searchLng)*(b.rlongitude-this.props.searchLng))
-            ) ? -1 : 1
-          )
-          
-          this.setState({ 
-            restaurantListings: response.data, 
-          })
-        }
-      }).catch(err =>{
-          console.log("No response")
+    const response = await this.props.client.query({
+      query: getRestaurantsByCuisineQuery,
     });
+    const { status, entity } = response.data.getRestaurantsByCuisine;
+    if (status === 200) {     
+      let locations = [];
+      entity.forEach(item => {
+        let location = {
+          name: item.rname,
+          lat: item.rlatitude,
+          lng: item.rlongitude
+        }
+        locations.push(location)
+      });
 
+      let pins = {
+        restaurants: locations
+      }
+      this.setState({ 
+        restaurantListings: entity, 
+      }) 
+    }
     return;
   }
 
