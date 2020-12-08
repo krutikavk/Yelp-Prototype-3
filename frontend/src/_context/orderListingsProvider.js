@@ -2,6 +2,9 @@ import * as React from 'react';
 import axios from 'axios';
 import {update, login, logout} from '../_actions';
 import {connect} from 'react-redux';
+import { graphql, compose, withApollo } from 'react-apollo';
+import composeLodash from 'lodash.flowright';
+import { ordersForCustomerQuery, ordersForRestaurantQuery } from '../_queries/queries';
 
 const DefaultState = {
   orderListings: [],
@@ -18,35 +21,37 @@ export class OrderListingsProvider extends React.Component {
 
   }
 
-  componentWillMount() {
-    //change this to axios call
-    let url = 'http://localhost:3001/orders/';
-
-    //Type: 'customers' or 'restaurants' 
-    //id: cid or rid
-    url += this.props.type + '/' + this.props.id
-    console.log("props", this.props)
-
-    //let url = 'http://localhost:3001/orders/restaurants/' + id
-    console.log("URL", url);
-
-    //axios.defaults.withCredentials = true;
-    //make a post request with the user data
-    axios.get(url)
-      .then(response => {
-        console.log("Status Code : ",response.status);
-        if(response.status === 200){
-          this.setState({ 
+  async componentWillMount() {
+    if(this.props.type === 'customers') {
+      const response = await this.props.client.query({
+        query: ordersForCustomerQuery,
+        variables: { cid: this.props.id}
+      });
+      const { status, entity } = response.data.ordersForCustomer;
+      if (status === 200) {     
+        this.setState({ 
             orderListings: response.data 
           })
           console.log("orderlistings", this.state.orderListings)
-          let oid = response.data.oid
+      } else {
+        alert('Error fetching orders')
+      }
 
-        }
-      }).catch(err =>{
-        //alert("Error fetching orders")
-        console.log("Error fetching orders")
-    });
+    } else if(this.props.type === 'restaurants') {
+      const response = await this.props.client.query({
+        query: ordersForRestaurantQuery,
+        variables: { rid: this.props.id}
+      });
+      const { status, entity } = response.data.ordersForRestaurant;
+      if (status === 200) {     
+        this.setState({ 
+            orderListings: response.data 
+          })
+          console.log("orderlistings", this.state.orderListings)
+      } else {
+        alert('Error fetching orders')
+      }
+    }
   }
 
   updateFilter = filter => {
@@ -59,10 +64,6 @@ export class OrderListingsProvider extends React.Component {
   static applyFilter(orders, filter) {
     const displayOrder = filter
     let result = orders
-    // console.log("filter", filter);
-    // console.log("displayorder", displayOrder);
-    // console.log("orders:" , orders)
-    // console.log("displayorder: ", displayOrder)
     console.log("Inside apply filter")
     console.log("orders", orders)
     
@@ -82,10 +83,6 @@ export class OrderListingsProvider extends React.Component {
     return result;
     
   }
-
-
-
-
 
   render() {
     let {children} = this.props
@@ -107,6 +104,5 @@ export class OrderListingsProvider extends React.Component {
 }
 
 
-//export default connect(mapStateToProps, mapDispatchToProps)(OrderListingsProvider);
-
+export default withApollo(OrderListingsProvider);
 export const OrderListingsConsumer = OrderListingsContext.Consumer

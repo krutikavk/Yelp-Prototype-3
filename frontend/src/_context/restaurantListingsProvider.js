@@ -96,53 +96,6 @@ class RestaurantListingsProvider extends React.Component {
       }) 
     }
     return;
-    /*
-    let url = 'http://localhost:3001/restaurants/search/rdelivery';
-    const data = {
-      rdelivery : delivery,
-    }
-    console.log("delivery data sent", data)
-    axios.post(url, data)
-      .then(response => {
-
-        if(response.status === 200){
-          //When results return multiple rows, rowdatapacket object needs to be converted to JSON object again 
-          //use JSON.parse(JSON.stringify()) to convert back to JSON object
-          let locations = [];
-          response.data.forEach(item => {
-            let location = {
-              name: item.rname,
-              lat: item.rlatitude,
-              lng: item.rlongitude
-            }
-            locations.push(location)
-          });
-
-          let pins = {
-            restaurants: locations
-          }
-
-          response.data = response.data.sort((a, b) => 
-            Math.sqrt(
-              ((a.rlatitude-this.props.searchLat)*(a.rlatitude-this.props.searchLat)) +
-              ((a.rlongitude-this.props.searchLng)*(a.rlongitude-this.props.searchLng))
-            ) <
-            Math.sqrt(
-              ((b.rlatitude-this.props.searchLat)*(b.rlatitude-this.props.searchLat)) +
-              ((b.rlongitude-this.props.searchLng)*(b.rlongitude-this.props.searchLng))
-            ) ? -1 : 1
-          )
-
-          this.setState({ 
-            restaurantListings: response.data, 
-          })
-        }
-      }).catch(err =>{
-          console.log("No response")
-    });
-
-    return;
-    */
   }
 
   getRestaurantByDname(dname) {

@@ -143,3 +143,35 @@ export const getRestaurantsByDeliveryQuery = gql`
     }
   }
 `;
+
+export const ordersForCustomerQuery = gql`
+  query ( $cid: ID ) {
+    ordersForCustomer ( cid: $cid ) {
+      status
+      entity {
+        id
+        rid
+        cid
+        ooption
+        ostatus
+        otime
+      }
+    }
+  }
+`;
+
+export const ordersForRestaurantQuery = gql`
+  query ( $rid: ID ) {
+    ordersForRestaurant ( rid: $rid ) {
+      status
+      entity {
+        id
+        rid
+        cid
+        ooption
+        ostatus
+        otime
+      }
+    }
+  }
+`;
